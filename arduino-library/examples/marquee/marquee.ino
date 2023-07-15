@@ -1,6 +1,6 @@
 #include <BROSE9323.h>
 
-BROSE9323 display(112, 16, 28);
+BROSE9323 display(84, 16, 28);
 
 /*
  * UMLAUT:
@@ -12,7 +12,7 @@ BROSE9323 display(112, 16, 28);
  * ü \x81
  * ß \xE0
  */
-const char text[] = "This is a test. Testing \x9Aml\x8Aute. ";
+const char text[] = "blah ";
 const uint8_t textsize = 2;
 
 void setup() {
