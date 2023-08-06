@@ -11,16 +11,16 @@ import datetime
 
 # Mystery github code!
 # https://stackoverflow.com/a/45475068
-port = '/dev/ttyUSB0'
+port = '/dev/ttyACM0'
 f = open(port)
 attrs = termios.tcgetattr(f)
 attrs[2] = attrs[2] & ~termios.HUPCL
 termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 f.close()
-arduino = serial.Serial()
-arduino.baudrate = 9600
-arduino.port = port
-arduino.open()
+arduinoSerial = serial.Serial()
+arduinoSerial.baudrate = 9600
+arduinoSerial.port = port
+arduinoSerial.writeTimeout = 0.2
 
 
 height = 16
@@ -38,33 +38,46 @@ charsetPath = 'charset.png'
 im = Image.open(charsetPath)
 pix = im.load()
 
+previousTime = [0, 0, 0, 0, 0, 0]
+
 while True:
 	now = datetime.datetime.now()
-	currentTime = [int(now.hour/10), now.hour%10, int(now.minute/10), now.minute%10, int(now.second/10), now.second%10];
-
-	charHeight = 11;
-	yOffset = 3;
-
-	for i, char in enumerate(currentTime):
-		if i%2 == 1:
-			xOffset = 1;
-		else:
-			xOffset = 0;
-			
-		for y in range(charHeight):
-			
-			if (y == 4 or y == 6) and (i == 1 or i == 3):
-				dot = 2**7;
-			else:
-				dot = 0;
-			
-			byteValue = 0;
-			for bit in range(8):
-				if pix[char*8+bit+xOffset, y][0] > 128:
-					byteValue += 2**(bit)
-			byteValue += dot;
-			displayData[(y+yOffset)*bufferWidth+i+2] = byteValue;
-			
-	arduino.write(displayData)
+	currentTime = [int(now.hour/10), now.hour%10, int(now.minute/10), now.minute%10, int(now.second/10), now.second%10]
 	
-	time.sleep(1);
+	if(currentTime != previousTime):
+
+		previousTime = currentTime
+
+		charHeight = 11
+		yOffset = 3
+
+		for i, char in enumerate(currentTime):
+			if i%2 == 1:
+				xOffset = 1
+			else:
+				xOffset = 0
+				
+			for y in range(charHeight):
+				
+				if (y == 4 or y == 6) and (i == 1 or i == 3):
+					dot = 2**7
+				else:
+					dot = 0
+				
+				byteValue = 0
+				for bit in range(8):
+					if pix[char*8+bit+xOffset, y][0] > 128:
+						byteValue += 2**(bit)
+				byteValue += dot
+				displayData[(y+yOffset)*bufferWidth+i+2] = byteValue
+				
+		try:
+			arduinoSerial.open()
+			arduinoSerial.write(displayData)
+			arduinoSerial.close()
+		except Exception as error:
+			print("nope: ", error)
+			print(currentTime)
+			print("----------------")
+		
+	time.sleep(0.005)

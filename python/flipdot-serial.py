@@ -10,7 +10,7 @@ import termios
 
 # Mystery github code!
 # https://stackoverflow.com/a/45475068
-port = '/dev/ttyUSB0'
+port = '/dev/ttyACM5'
 f = open(port)
 attrs = termios.tcgetattr(f)
 attrs[2] = attrs[2] & ~termios.HUPCL
