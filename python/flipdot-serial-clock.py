@@ -3,15 +3,28 @@
 import os
 import sys
 import serial
+import serial.tools.list_ports
 import time
 from PIL import Image
 import termios
+import warnings
 import datetime
 
+# autodetect arduino
+arduinos = []
+for p in serial.tools.list_ports.comports():
+    if p.manufacturer and 'Arduino' in p.manufacturer:
+        arduinos.append(p.device)
+
+if not arduinos:
+    raise IOError("No Arduino found")
+if len(arduinos) > 1:
+    warnings.warn('Multiple Arduinos found - using the first')
 
 # Mystery github code!
 # https://stackoverflow.com/a/45475068
-port = '/dev/ttyACM0'
+# This sets up a serial connection without resetting the arduino.
+port = arduinos[0]
 f = open(port)
 attrs = termios.tcgetattr(f)
 attrs[2] = attrs[2] & ~termios.HUPCL
