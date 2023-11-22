@@ -10,7 +10,7 @@ int fliptime = 250;
 int bufferWidth = (width+7)/8;
 int bufferSize = bufferWidth*height;
 
-int timeOfLastSignal = now();
+time_t timeOfLastSignal = now();
 bool lostSignal = false;
 
 BROSE9323 display(width, height, panelWidth, fliptime);
