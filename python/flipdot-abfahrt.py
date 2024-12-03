@@ -377,4 +377,4 @@ while True:
 	processDepartures(departures)
 	displayImage()
 	outputImage = blankImage.copy()
-	time.sleep(1)
+	time.sleep(10)
