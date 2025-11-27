@@ -107,7 +107,7 @@ def printDepartures(departures, y, doDisplay):
 				destination = replacements[destination]
 			
 			#print("   {:<2s}".format(line) + " " + "{:8.8s}".format(destination) + " " + "{:>5s}".format(displayTime) + " " + direction)
-			print("   {:<2s}".format(line) + " " + "{:8s}".format(destination) + " " + "{:>5s}".format(displayTime) + " " + direction)
+			#print("   {:<2s}".format(line) + " " + "{:8s}".format(destination) + " " + "{:>5s}".format(displayTime) + " " + direction)
 			
 			if doDisplay:
 				writeText("{:¡>2s}".format(line), [0, y])
@@ -308,48 +308,6 @@ def processDepartures(departures):
 		
 		return processedDepartures
 		
-		#print()
-		#print("All Bern:")
-		#printDepartures(allBern, 0, False)
-		#print("Tram Bern:")
-		#printDepartures(tramsBern, 0, False)
-		#print("Tram Europaplatz:")
-		#printDepartures(tramsEuropaplatz, 9, False)
-		#print("Bus Bern:")
-		#printDepartures(busBern, 0, False)
-		#print("Bus Köniz:")
-		#printDepartures(busKoeniz, 9, False)
-		
-		#print()
-		#print()
-		
-		
-		#printDepartures(compress(tramsBern, [1, 0]), 0, True)
-		#printDepartures(compress(tramsEuropaplatz, [1, 0]), 9, True)
-		
-		#printDepartures(allBern[0:1], 0, True)
-		#printDepartures(allBern[1:2], 9, True)
-		#printDepartures(tramsEuropaplatz[0:1], 9, True)
-		#printDepartures(busKoeniz[0:1], 16+8+9, True)
-		
-		# printDepartures(tramsBern[0:1], 0, True)
-		# printDepartures(tramsBern[1:2], 9, True)
-		# printDepartures(tramsEuropaplatz[0:1], 16+8, True)
-		# printDepartures(tramsEuropaplatz[1:2], 16+8+9, True)
-		# printDepartures(busBern[0:1], 32+16, True)
-		# printDepartures(busKoeniz[0:1], 32+16+9, True)
-		
-		# printDepartures(departures[0:1], 0, True)
-		# printDepartures(departures[1:2], 9, True)
-		# printDepartures(departures[2:3], 16+8, True)
-		# printDepartures(departures[3:4], 16+8+9, True)
-		# printDepartures(departures[4:5], 32+16, True)
-		# printDepartures(departures[5:6], 32+16+9, True)
-		#print()
-		#print("--------------------------------------------------------------------------------------")
-		#print()
-		#printDepartures(compress(busBern, [1]))
-		#printDepartures(compress(busKoeniz, [1]))
 	except Exception as err:
 		outputImage = blankImage.copy()
 		writeText("Schinbar si aui", [4, 0])
