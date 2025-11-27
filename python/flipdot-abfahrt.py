@@ -22,10 +22,10 @@ for p in serial.tools.list_ports.comports():
 
 if not arduinos:
     raise IOError("No Arduino found")
-if len(arduinos) > 1:
-    warnings.warn('Multiple Arduinos found - using the first')
+#if len(arduinos) > 1:
+#    warnings.warn('Multiple Arduinos found - using the first')
 
-serialConnections = [len(arduinos)]
+serialConnections = []
 
 for a, arduino in enumerate(arduinos):
 	# Mystery github code!
