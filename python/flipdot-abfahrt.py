@@ -37,10 +37,11 @@ for a, arduino in enumerate(arduinos):
 	attrs[2] = attrs[2] & ~termios.HUPCL
 	termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
 	f.close()
-	serialConnections[a] = serial.Serial()
-	serialConnections[a].baudrate = 9600
-	serialConnections[a].port = port
-	serialConnections[a].writeTimeout = 0.2
+	connection = serial.Serial()
+	connection.baudrate = 9600
+	connection.port = port
+	connection.writeTimeout = 0.2
+	serialConnections.append(connection)
 
 
 #height = 16*3+16
