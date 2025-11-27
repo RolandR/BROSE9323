@@ -25,19 +25,22 @@ if not arduinos:
 if len(arduinos) > 1:
     warnings.warn('Multiple Arduinos found - using the first')
 
-# Mystery github code!
-# https://stackoverflow.com/a/45475068
-# This sets up a serial connection without resetting the arduino.
-port = arduinos[0]
-f = open(port)
-attrs = termios.tcgetattr(f)
-attrs[2] = attrs[2] & ~termios.HUPCL
-termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
-f.close()
-arduinoSerial = serial.Serial()
-arduinoSerial.baudrate = 9600
-arduinoSerial.port = port
-arduinoSerial.writeTimeout = 0.2
+serialConnections = []
+
+for a, arduino in arduinos:
+	# Mystery github code!
+	# https://stackoverflow.com/a/45475068
+	# This sets up a serial connection without resetting the arduino.
+	port = arduino
+	f = open(port)
+	attrs = termios.tcgetattr(f)
+	attrs[2] = attrs[2] & ~termios.HUPCL
+	termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
+	f.close()
+	serialConnections[a] = serial.Serial()
+	serialConnections[a].baudrate = 9600
+	serialConnections[a].port = port
+	serialConnections[a].writeTimeout = 0.2
 
 
 #height = 16*3+16
@@ -294,28 +297,38 @@ def processDepartures(departures):
 		busBern = list(filter(lambda x: (x["line"] == "17") and x["direction"] == "H", departures))
 		allBern = list(filter(lambda x: x["direction"] == "H", departures))
 		
-		print()
-		print("All Bern:")
-		printDepartures(allBern, 0, False)
-		print("Tram Bern:")
-		printDepartures(tramsBern, 0, False)
-		print("Tram Europaplatz:")
-		printDepartures(tramsEuropaplatz, 9, False)
-		print("Bus Bern:")
-		printDepartures(busBern, 0, False)
-		print("Bus Köniz:")
-		printDepartures(busKoeniz, 9, False)
+		processedDepartures = {
+			"tramsEuropaplatz": tramsEuropaplatz,
+			"tramsBern": tramsBern,
+			"busKoeniz": busKoeniz,
+			"busBern": busBern,
+			"allBern": allBern,
+		}
 		
-		print()
-		print()
+		return processedDepartures
+		
+		#print()
+		#print("All Bern:")
+		#printDepartures(allBern, 0, False)
+		#print("Tram Bern:")
+		#printDepartures(tramsBern, 0, False)
+		#print("Tram Europaplatz:")
+		#printDepartures(tramsEuropaplatz, 9, False)
+		#print("Bus Bern:")
+		#printDepartures(busBern, 0, False)
+		#print("Bus Köniz:")
+		#printDepartures(busKoeniz, 9, False)
+		
+		#print()
+		#print()
 		
 		
 		#printDepartures(compress(tramsBern, [1, 0]), 0, True)
 		#printDepartures(compress(tramsEuropaplatz, [1, 0]), 9, True)
 		
-		printDepartures(allBern[0:1], 0, True)
+		#printDepartures(allBern[0:1], 0, True)
 		#printDepartures(allBern[1:2], 9, True)
-		printDepartures(tramsEuropaplatz[0:1], 9, True)
+		#printDepartures(tramsEuropaplatz[0:1], 9, True)
 		#printDepartures(busKoeniz[0:1], 16+8+9, True)
 		
 		# printDepartures(tramsBern[0:1], 0, True)
@@ -331,9 +344,9 @@ def processDepartures(departures):
 		# printDepartures(departures[3:4], 16+8+9, True)
 		# printDepartures(departures[4:5], 32+16, True)
 		# printDepartures(departures[5:6], 32+16+9, True)
-		print()
-		print("--------------------------------------------------------------------------------------")
-		print()
+		#print()
+		#print("--------------------------------------------------------------------------------------")
+		#print()
 		#printDepartures(compress(busBern, [1]))
 		#printDepartures(compress(busKoeniz, [1]))
 	except Exception as err:
@@ -344,7 +357,7 @@ def processDepartures(departures):
 		print(err)
 		print("-----------------------------")
 
-def displayImage():
+def displayImage(serialConnection):
 	
 	transformedImage = outputImage.rotate(180)
 	for y in range(height):
@@ -357,9 +370,9 @@ def displayImage():
 			displayData[y*bufferWidth+(xByte)] = byteValue;
 
 	try:
-		arduinoSerial.open()
-		arduinoSerial.write(displayData)
-		arduinoSerial.close()
+		serialConnection.open()
+		serialConnection.write(displayData)
+		serialConnection.close()
 	except Exception as error:
 		print("nope: ", error)
 		
@@ -374,7 +387,16 @@ while True:
 	if secondsSinceLastRequest >= 20:
 		departures = checkAPI()
 		timeOfLastRequest = now
-	processDepartures(departures)
-	displayImage()
+	dep = processDepartures(departures)
+	
+	printDepartures(dep.allBern[0:1], 0, True)
+	printDepartures(dep.allBern[1:2], 9, True)
+	displayImage(serialConnections[0])
 	outputImage = blankImage.copy()
-	time.sleep(10)
+	
+	printDepartures(dep.tramsEuropaplatz[0:1], 0, True)
+	printDepartures(dep.busKoeniz[0:1], 9, True)
+	displayImage(serialConnections[1])
+	outputImage = blankImage.copy()
+	
+	time.sleep(1)

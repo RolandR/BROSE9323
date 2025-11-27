@@ -12,9 +12,11 @@ import datetime
 
 # autodetect arduino
 arduinos = []
-for p in serial.tools.list_ports.comports():
-    if p.manufacturer and 'Arduino' in p.manufacturer:
-        arduinos.append(p.device)
+	
+for p in serial.tools.list_ports.comports(include_links=True):
+	print(p)
+	if p.manufacturer and 'Arduino' in p.manufacturer:
+		arduinos.append(p.device)
 
 if not arduinos:
     raise IOError("No Arduino found")

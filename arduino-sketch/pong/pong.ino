@@ -87,7 +87,7 @@ void loop() {
   posX = posX + vectorX*(timeSinceLastTime/1000000.0)*speed;
   posY = posY + vectorY*(timeSinceLastTime/1000000.0)*speed;
 
-  vectorY = vectorY + 4*(timeSinceLastTime/1000000.0);
+  //vectorY = vectorY + 4*(timeSinceLastTime/1000000.0);
 
   if(posX < 0.5){
     vectorX = vectorX*(-1.0);
