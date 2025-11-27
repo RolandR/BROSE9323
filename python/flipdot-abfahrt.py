@@ -27,7 +27,7 @@ if len(arduinos) > 1:
 
 serialConnections = []
 
-for a, arduino in arduinos:
+for a, arduino in enumerate(arduinos):
 	# Mystery github code!
 	# https://stackoverflow.com/a/45475068
 	# This sets up a serial connection without resetting the arduino.
