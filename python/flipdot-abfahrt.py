@@ -25,7 +25,7 @@ if not arduinos:
 if len(arduinos) > 1:
     warnings.warn('Multiple Arduinos found - using the first')
 
-serialConnections = []
+serialConnections = [len(arduinos)]
 
 for a, arduino in enumerate(arduinos):
 	# Mystery github code!
