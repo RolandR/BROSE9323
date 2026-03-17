@@ -10,9 +10,9 @@ import serial
 from PIL import Image
 import json
 
-from setText import *
+#from setText import *
 from connect import *
-import fahrplan
+#import fahrplan
 
 
 params = {
