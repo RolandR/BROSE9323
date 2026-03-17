@@ -331,14 +331,19 @@ while True:
 		timeOfLastRequest = now
 	dep = processDepartures(departures)
 	
-	printDepartures(dep["allBern"][0:1], 0, True)
-	printDepartures(dep["allBern"][1:2], 9, True)
+	printDepartures(dep["tramsBern"][0:1], 0, True)
+	printDepartures(dep["tramsBern"][1:2], 9, True)
 	displayImage(flipdots["Flipdot 0"])
 	outputImage = blankImage.copy()
 	
 	printDepartures(dep["tramsEuropaplatz"][0:1], 0, True)
-	printDepartures(dep["busKoeniz"][0:1], 9, True)
+	printDepartures(dep["tramsEuropaplatz"][1:2], 9, True)
 	displayImage(flipdots["Flipdot 1"])
+	outputImage = blankImage.copy()
+	
+	printDepartures(dep["busBern"][0:1], 0, True)
+	printDepartures(dep["busKoeniz"][0:1], 9, True)
+	displayImage(flipdots["Flipdot 2"])
 	outputImage = blankImage.copy()
 	
 	time.sleep(1)
