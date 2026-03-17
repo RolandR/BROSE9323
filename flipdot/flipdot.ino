@@ -1,4 +1,6 @@
+#include <TimeLib.h>
 #include <BROSE9323.h>
+
 
 int height = 16;
 int width = 84;
@@ -7,6 +9,9 @@ int fliptime = 250;
 
 int bufferWidth = (width+7)/8;
 int bufferSize = bufferWidth*height;
+
+time_t timeOfLastSignal = now();
+bool lostSignal = false;
 
 BROSE9323 display(width, height, panelWidth, fliptime);
 
@@ -46,27 +51,37 @@ void setup() {
       display.drawPixel(x, y, 0);
     }
   }
-
-  display.setCursor(2, 2);
-  display.print(" reset");
-  display.display();
-  delay(500);
-  
-  for(int x = 0; x <= width; x++){
-    for(int y = 0; y <= height; y++){
-      display.drawPixel(x, y, 0);
-    }
-  }
   
   display.setDirect(false);
-  Serial.println("GUTEN TAG");
+  Serial.print("Flipdot 2\n");
 }
 
 void loop() {
   int delayTime = 0;
 
-  Serial.readBytes(display._new_buffer, bufferSize);
-  display.display();
-  //Serial.println("waiting");
-  
+  Serial.print("Flipdot 2\n");
+
+  int bytesRead = Serial.readBytes(display._new_buffer, bufferSize);
+  if(bytesRead != 0){
+    display.display();
+    timeOfLastSignal = now();
+    lostSignal = false;
+  } else {
+    if(!lostSignal){
+      if(now() - timeOfLastSignal > 6*60){
+        for(int x = 0; x <= width; x++){
+          for(int y = 0; y <= height; y++){
+            display.drawPixel(x, y, 0);
+          }
+        }
+        display.setTextSize(1);
+        display.setCursor(5, 0);
+        display.print("help I broke");
+        display.setCursor(2, 9);
+        display.print("call DRML pls");
+        display.display();
+        lostSignal = true;
+      }
+    }
+  }
 }
