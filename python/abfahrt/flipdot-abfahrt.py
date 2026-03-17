@@ -3,45 +3,27 @@
 import os
 import sys
 import math
-import serial
-import serial.tools.list_ports
 import time
-from PIL import Image
-import termios
+from datetime import datetime, timedelta
 import warnings
-from datetime import datetime, timezone, timedelta
-import requests
-import xml.etree.ElementTree as ET
-from itertools import compress
+import serial
+from PIL import Image
+import json
 
-# autodetect arduino
-arduinos = []
-for p in serial.tools.list_ports.comports():
-    if p.manufacturer and 'Arduino' in p.manufacturer:
-        arduinos.append(p.device)
+from setText import *
+from connect import *
+import fahrplan
 
-if not arduinos:
-    raise IOError("No Arduino found")
-#if len(arduinos) > 1:
-#    warnings.warn('Multiple Arduinos found - using the first')
 
-serialConnections = []
+params = {
+	"flipdotsCount": 3,
+	"height": 16,
+	"width": 84,
+	"smallestWhitespace": 3,
+	"largestWhitespace":8,
+}
 
-for a, arduino in enumerate(arduinos):
-	# Mystery github code!
-	# https://stackoverflow.com/a/45475068
-	# This sets up a serial connection without resetting the arduino.
-	port = arduino
-	f = open(port)
-	attrs = termios.tcgetattr(f)
-	attrs[2] = attrs[2] & ~termios.HUPCL
-	termios.tcsetattr(f, termios.TCSAFLUSH, attrs)
-	f.close()
-	connection = serial.Serial()
-	connection.baudrate = 9600
-	connection.port = port
-	connection.writeTimeout = 0.2
-	serialConnections.append(connection)
+flipdots = connectFlipdots()
 
 
 #height = 16*3+16
@@ -184,7 +166,7 @@ def checkAPI():
 		
 		now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 		results = 15
-		env = "_test"
+		env = "_prod"
 		
 		requestXML = requestXML.format(timestamp=now, numResults=results, env=env)
 			
@@ -350,12 +332,12 @@ while True:
 	
 	printDepartures(dep["allBern"][0:1], 0, True)
 	printDepartures(dep["allBern"][1:2], 9, True)
-	displayImage(serialConnections[0])
+	displayImage(flipdots["Flipdot 0"])
 	outputImage = blankImage.copy()
 	
 	printDepartures(dep["tramsEuropaplatz"][0:1], 0, True)
 	printDepartures(dep["busKoeniz"][0:1], 9, True)
-	displayImage(serialConnections[1])
+	displayImage(flipdots["Flipdot 1"])
 	outputImage = blankImage.copy()
 	
 	time.sleep(1)
