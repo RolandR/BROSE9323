@@ -300,7 +300,8 @@ def processDepartures(departures):
 
 def displayImage(serialConnection):
 	
-	transformedImage = outputImage.rotate(180)
+	transformedImage = outputImage
+	
 	for y in range(height):
 		for xByte in range(bufferWidth):
 			byteValue = 0;
